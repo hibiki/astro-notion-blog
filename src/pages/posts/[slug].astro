@@ -26,6 +26,12 @@ import BlogPostsLink from '../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../components/BlogTagsLink.astro'
 import styles from '../../styles/blog.module.css'
 
+// 👇importを追加
+import PostFeaturedImage from '../../components/PostFeaturedImage.astro'
+
+//TocLinkをslugへ追加
+import TocLink from '../../components/notion-blocks/TocLink.astro'
+
 export async function getStaticPaths() {
   const posts = await getAllPosts()
   return posts.map((post: interfaces.Post) => ({ params: { slug: post.Slug } }))
@@ -101,9 +107,13 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
 >
   <div slot="main" class={styles.main}>
     <div class={styles.post}>
-      <PostDate post={post} />
-      <PostTags post={post} />
+      <!-- 👇アイキャッチ表示処理 -->
+      <PostFeaturedImage post={post} enableLink={false} />
+
       <PostTitle post={post} enableLink={false} />
+      <PostTags post={post} />
+      <PostDate post={post} />
+
       <PostBody blocks={blocks} />
       <PostTags post={post} />
 
@@ -120,8 +130,12 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
         (p: interfaces.Post) => p.Slug !== post.Slug
       )}
     />
-    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
-    <BlogPostsLink heading="Latest posts" posts={recentPosts} />
+    <!-- BlogPostsLink heading="Recommended" posts={rankedPosts} / -->
+    <!-- BlogPostsLink heading="Latest posts" posts={recentPosts} / -->
     <BlogTagsLink heading="Categories" tags={tags} />
+  </div>
+
+  <div slot="toc" class="toc">
+    <TocLink blocks={blocks} />
   </div>
 </Layout>

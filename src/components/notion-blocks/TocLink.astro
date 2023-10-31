@@ -1,0 +1,175 @@
+---
+import * as interfaces from "../../lib/interfaces.ts";
+import { buildHeadingId } from "../../lib/blog-helpers.ts";
+import { snakeToKebab } from "../../lib/style-helpers.ts";
+import "../../styles/notion-color.css";
+
+export interface Props {
+  blocks: interfaces.Block;
+}
+
+const buildHeadingId = (heading) =>
+  heading.RichTexts.map(
+    (richText: interfaces.RichText) => richText.Text.Content
+  )
+    .join()
+    .trim();
+
+const { blocks } = Astro.props;
+
+const istoc = blocks.filter(
+  (b: interfaces.Block) => b.Type === "table_of_contents"
+);
+const headings = blocks.filter(
+  (b: interfaces.Block) =>
+    b.Type === "heading_1" || b.Type === "heading_2" || b.Type === "heading_3"
+);
+
+if (istoc.length === 0) {
+  return;
+}
+---
+
+<nav class="toc-nav">
+  <div class="toc-nav-inner">
+  {
+    headings.map((headingBlock: interfaces.Block) => {
+      const heading =
+        headingBlock.Heading1 || headingBlock.Heading2 || headingBlock.Heading3;
+
+      let indentClass = "";
+      if (headingBlock.Type === "heading_2") {
+        indentClass = "indent-1";
+      } else if (headingBlock.Type === "heading_3") {
+        indentClass = "indent-2";
+      }
+
+      return (
+        <span>
+          <a
+            href={`#${buildHeadingId(heading)}`}
+            class={`${indentClass}`}
+          >
+          {heading.RichTexts.map(
+            (richText: interfaces.RichText) => richText.PlainText
+          ).join('')}
+          </a>
+        </span>
+      );
+    })
+  }
+  </div>
+</nav>
+
+<style>
+  .toc-nav {
+    position: sticky;
+    top: 2.5rem;
+    align-self: start;
+
+    background-color: #fff;
+    border-radius: .5rem;
+
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 5rem);
+  }
+  .toc-nav::before {
+    display: block;
+    margin: 0 0 0.5rem;
+    padding: 0.5rem 0.5rem;
+    font-size: .9rem;
+    content: "目次";
+    font-weight: 700;
+    color: #555555;
+    border-bottom: 2px dashed #eeeeee;
+    border-radius: .5rem .5rem 0 0;
+  }
+
+  .toc-nav-inner {
+    padding: .5rem .5rem 1rem;
+    overflow: auto;
+    // スクロールバー設定
+    --sb-track-color: #ffffff;
+    --sb-thumb-color: #babbbb;
+    --sb-size: 10px;
+    scrollbar-color: var(--sb-thumb-color) 
+                    var(--sb-track-color);
+  }
+  .toc-nav-inner::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+  .toc-nav-inner::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 10px;
+  }
+  .toc-nav-inner::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 10px;
+  }
+
+  .toc-nav span.active > a {
+    color: #000;
+    font-weight: bold;
+  }
+
+  .toc-nav span > a {
+    display: block;
+    color: inherit;
+    line-height: 1.8rem;
+    font-size: 0.9rem;
+    padding: 0 .3rem;
+    border-radius: var(--radius);
+  /*  text-decoration: underline; */
+    transition: all 50ms ease-in-out; /* 💡 This small transition makes setting of the active state smooth */
+  }
+
+  .toc-nav span > a:hover,
+  .toc-nav span > a:focus {
+    color: #000;
+    background: #e9e9e9!important;
+  }
+
+  .toc-nav span > a.indent-1 {
+    padding-left: 1.5rem;
+  }
+
+  .toc-nav span > a.indent-2 {
+    padding-left: 3rem;
+  }
+</style>
+
+<script is:inline>
+  //オプション
+  const options = {
+    //20% 見えてからコールバック関数を呼び出す
+    //rootMargin: "-20% 0px",
+    threshold: 1.0,
+  };
+
+  // コールバック関数
+  const callback = (entries) => {
+    entries.forEach((entry) => {
+      const id = entry.target.getAttribute("id");
+      if (entry.isIntersecting) {
+        document
+          .querySelector(`nav span a[href="#${id}"]`)
+          .parentElement.classList.add("active");
+      } else {
+        document
+          .querySelector(`nav span a[href="#${id}"]`)
+          .parentElement.classList.remove("active");
+      }
+    });
+  };
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const observer = new IntersectionObserver(callback, options);
+
+    // 全ての`id`付きの`a`tag要素を抽出
+    document.querySelectorAll("a[id]").forEach((elem) => {
+      observer.observe(elem);
+    });
+
+  });
+</script>

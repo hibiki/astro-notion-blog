@@ -1,6 +1,6 @@
 ---
-import { Post } from '../lib/interfaces.ts'
-import { getPostLink } from '../lib/blog-helpers.ts'
+import { Post } from '../lib/interfaces.js'
+import { getPostLink } from '../lib/blog-helpers.js'
 
 export interface Props {
   post: Post
@@ -12,7 +12,7 @@ const { post, enableLink = true } = Astro.props
 let title = post.Title
 ---
 
-<h2 class="post-title">
+<div class="post-title-archives">
   {
     enableLink ? (
       <a href={getPostLink(post.Slug)}>
@@ -48,44 +48,43 @@ let title = post.Title
       </>
     )
   }
-</h2>
+</div>
 
 <style>
-  .post-title {
+  .post-title-archives {
     margin: 0;
-    padding: 0.8rem 0 1.5rem;
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1rem;
     color: var(--fg);
     line-height: 125%;
   }
-  .post-title a {
-    font-size: 1.6rem;
+  .post-title-archives a {
+    font-size: 1rem;
     color: inherit;
     line-height: 125%;
+    text-decoration: underline;
   }
-  .post-title a:hover {
-    color: #666;
+  .post-title-archives a:hover {
+    text-decoration: none;
   }
-  .post-title span,
-  .post-title img {
+  .post-title-archives span,
+  .post-title-archives img {
     display: inline-block;
     margin-right: 0.2em;
   }
-  .post-title span {
-    font-size: 1.2em;
+  .post-title-archives span {
+    font-size: 1em;
   }
-  .post-title img {
+  .post-title-archives img {
     width: 1.3em;
     height: 1.3em;
     vertical-align: sub;
   }
   @media (max-width: 640px) {
-    .post-title {
-      font-size: 1.4rem;
+    .post-title-archives {
+      font-size: 1rem;
     }
-    .post-title a {
-      font-size: 1.2rem;
+    .post-title-archives a {
+      font-size: 1rem;
     }
   }
 </style>

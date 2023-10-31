@@ -1,0 +1,73 @@
+---
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../server-constants.ts'
+import {
+  getPosts,
+  getRankedPosts,
+  getAllTags,
+  getNumberOfPages,
+} from '../../lib/notion/client.ts'
+import Layout from '../../layouts/Layout.astro'
+import NoContents from '../../components/NoContents.astro'
+import PostDate from '../../components/PostDate.astro'
+//import PostTags from '../../components/PostTags.astro'
+import PostTitleArchives from '../../components/PostTitle_archives.astro'
+//import PostTitle from '../../components/PostTitle.astro'
+//import PostFeaturedImage from '../../components/PostFeaturedImage.astro'
+//import PostExcerpt from '../../components/PostExcerpt.astro'
+//import ReadMoreLink from '../../components/ReadMoreLink.astro'
+import Pagination from '../../components/Pagination.astro'
+import BlogPostsLink from '../../components/BlogPostsLink.astro'
+import BlogTagsLink from '../../components/BlogTagsLink.astro'
+import styles from '../../styles/blog.module.css'
+
+const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+  //getPosts(NUMBER_OF_POSTS_PER_PAGE),
+  getPosts("100"),
+  getRankedPosts(),
+  getAllTags(),
+  getNumberOfPages(),
+])
+---
+
+<Layout>
+  <div slot="main" class={styles.main}>
+    <ul class="archive-ul">
+    {
+      posts.length === 0 ? (
+        <NoContents contents={posts} />
+      ) : (
+        posts.map((post) => (
+          <li class="" key={post.Slug}>
+            <PostDate post={post} />
+            <PostTitleArchives post={post} />
+          </li>
+        ))
+      )
+    }
+    </ul>
+
+    <footer class="archive-footer">
+      <!--
+      <Pagination currentPage={1} numberOfPages={numberOfPages} />
+       -->
+    </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
+    <BlogTagsLink heading="Categories" tags={tags} />
+  </div>
+</Layout>
+
+<style>
+  .archive-ul {
+    margin: 1em 0;
+  }
+  .archive-ul li {
+    margin-bottom: 1em;
+  }
+
+  footer.archive-footer {
+    margin-top: 3em;
+  }
+</style>

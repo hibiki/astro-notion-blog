@@ -66,6 +66,13 @@ if (database.Icon && database.Icon.Type === 'file') {
     <meta name="twitter:description" content={siteDescription} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage || siteOGImage} />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
@@ -76,7 +83,7 @@ if (database.Icon && database.Icon.Type === 'file') {
   <body>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     <div class="container">
-      <header>
+      <!-- header>
         {
           coverImageURL && (
             <div class="cover">
@@ -84,48 +91,57 @@ if (database.Icon && database.Icon.Type === 'file') {
             </div>
           )
         }
-      </header>
+      </header -->
+      <div class="blog-name">
+        <header>
+          <h1>
+            <a href={getNavLink('/')}>
+              {
+                database.Icon && database.Icon.Type === 'emoji' ? (
+                  <>
+                    <span>{database.Icon.Emoji}</span>
+                    {database.Title}
+                  </>
+                ) : database.Icon && database.Icon.Type === 'external' ? (
+                  <>
+                    <img src={database.Icon.Url} alt="Site icon image" />
+                    {database.Title}
+                  </>
+                ) : database.Icon && database.Icon.Type === 'file' ? (
+                  <>
+                    <img
+                      src={customIconURL}
+                      class="custom-icon"
+                      alt="Site icon image"
+                    />
+                    {database.Title}
+                  </>
+                ) : (
+                  database.Title
+                )
+              }
+            </a>
+          </h1>
+          <div class="description">
+            {database.Description}
+          </div>
+        </header>
+      </div>
 
       <div>
+        <div class="toc-box">
+          <slot name="toc" />
+        </div>
         <main>
           <div class="content">
-            <header>
-              <h1>
-                <a href={getNavLink('/')}>
-                  {
-                    database.Icon && database.Icon.Type === 'emoji' ? (
-                      <>
-                        <span>{database.Icon.Emoji}</span>
-                        {database.Title}
-                      </>
-                    ) : database.Icon && database.Icon.Type === 'external' ? (
-                      <>
-                        <img src={database.Icon.Url} alt="Site icon image" />
-                        {database.Title}
-                      </>
-                    ) : database.Icon && database.Icon.Type === 'file' ? (
-                      <>
-                        <img
-                          src={customIconURL}
-                          class="custom-icon"
-                          alt="Site icon image"
-                        />
-                        {database.Title}
-                      </>
-                    ) : (
-                      database.Title
-                    )
-                  }
-                </a>
-              </h1>
-              <div class="description">
-                {database.Description}
-              </div>
-            </header>
 
             <slot name="main" />
 
             <footer>
+              <div>
+                ©櫻井響<br>
+                X（Twitter）： <a href="https://twitter.com/hibiki_3d">@hibiki_3d</a>
+              </div>
               <div>
                 <span>Powered by</span>
                 <a href="https://github.com/otoyo/astro-notion-blog"
@@ -153,11 +169,23 @@ if (database.Icon && database.Icon.Type === 'file') {
 <style>
   .container {
     min-height: 100vh;
+    background: #f5f5f5;
   }
+
+  /*
+  @media (min-width: 640px) {
+    .container {
+    margin: 0 auto;
+    width: 80%;
+    max-width: 720px;
+    }
+  }
+  */
 
   .container > div {
     display: flex;
-    max-width: 1280px;
+    max-width: 1240px;
+    margin: 0 auto;
   }
   @media (max-width: 640px) {
     .container > div {
@@ -169,23 +197,46 @@ if (database.Icon && database.Icon.Type === 'file') {
     flex: 1;
     order: 2;
     justify-content: space-between;
+    background: #fff;
+    margin: 0 3px;
+    border-radius: .5rem;
   }
   @media (max-width: 640px) {
     main {
       order: 1;
+      min-width: 100%;
+      margin: 0;
     }
   }
 
   aside {
     order: 1;
     width: 300px;
-    padding: 20px 20px;
-    background-color: #f4f4f4;
+    padding: 20px 0 20px 20px;
+    margin: 0 3px;
+    border-radius: .5rem;
   }
   @media (max-width: 640px) {
     aside {
       order: 2;
       width: 100%;
+      margin: 0;
+    }
+  }
+
+  .toc-box {
+    order: 3;
+    width: 300px;
+    padding: 0;
+    margin: 0 3px;
+    border-radius: .5rem;
+  }
+  @media (max-width: 640px) {
+    .toc-box {
+      display: none;
+      order: 3;
+      min-width: 100%;
+      margin: 0;
     }
   }
 
@@ -194,7 +245,7 @@ if (database.Icon && database.Icon.Type === 'file') {
   div.cover img {
     display: block;
     width: 100%;
-    height: 20vh;
+    height: 0vh;
     object-fit: cover;
     object-position: center 60%;
   }
@@ -204,47 +255,55 @@ if (database.Icon && database.Icon.Type === 'file') {
   }
   @media (max-width: 640px) {
     div.content {
-      padding: 0 18px;
+      padding: 1rem 18px;
     }
   }
 
-  main header {
-    padding: 20px 0 20px;
+  .blog-name {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-bottom: 5px #f5f5f5 solid;
   }
-  main header h1 {
+  .blog-name header {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+  }
+  .blog-name header h1 {
     font-weight: 700;
     color: #333;
   }
-  main header h1 a {
+  .blog-name header h1 a {
     display: block;
     color: inherit;
   }
-  main header h1 a:hover {
+  .blog-name header h1 a:hover {
     color: inherit;
   }
-  main header h1 a span,
-  main header h1 a img {
+  .blog-name header h1 a span,
+  .blog-name header h1 a img {
     display: inline-block;
     font-size: 1.1em;
   }
-  main header h1 a span {
+  .blog-name header h1 a span {
     margin-right: 0.3em;
     margin-left: -0.1rem;
   }
-  main header h1 a img {
+  .blog-name header h1 a img {
     width: 1.2em;
     height: 1.2em;
     margin-right: 0.2em;
     margin-left: -0.3rem;
     vertical-align: sub;
   }
-  main header h1 a img.custom-icon {
+  .blog-name header h1 a img.custom-icon {
     border-radius: var(--radius);
   }
 
-  main header div.description {
-    padding: 0.3rem 0 0.6rem;
+  .blog-name header div.description {
+    padding: 0.3rem 0 0;
     font-size: 0.95rem;
+    text-align: center;
   }
 
   main footer {
@@ -293,6 +352,10 @@ if (database.Icon && database.Icon.Type === 'file') {
   * {
     box-sizing: border-box;
     word-break: break-word;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   html,
@@ -348,7 +411,7 @@ if (database.Icon && database.Icon.Type === 'file') {
   h1 {
     margin: 0;
     color: var(--fg);
-    font-size: 2rem;
+    font-size: 1rem;
     font-weight: 700;
   }
 
@@ -432,4 +495,9 @@ if (database.Icon && database.Icon.Type === 'file') {
     display: inline-block;
     min-height: 0.9rem;
   }
+
+  .toc-box .toc {
+    height: 100%;
+  }
+
 </style>

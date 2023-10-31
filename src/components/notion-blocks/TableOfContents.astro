@@ -42,7 +42,18 @@ const { block, headings } = Astro.props
 </div>
 
 <style>
-  .table-of-contents {
+  div.table-of-contents {
+    padding: 0 1.5rem 1rem;
+    border: 5px solid #f5f5f5;
+    border-radius: .5rem;
+  }
+  div.table-of-contents::before {
+    display: inline-block;
+    margin: 0 -1.5rem 1rem;
+    padding: 0.3rem 0.5rem;
+    font-size: .9rem;
+    background: #f5f5f5;
+    content: "目次";
   }
   .table-of-contents > a {
     display: block;
@@ -50,9 +61,11 @@ const { block, headings } = Astro.props
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: underline;
+    color: #333;
   }
   .table-of-contents > a:hover {
     background: rgba(241, 241, 239, 1) !important;
+    color: #000;
   }
   .table-of-contents > a.indent-1 {
     padding-left: 1.5rem;
@@ -60,4 +73,6 @@ const { block, headings } = Astro.props
   .table-of-contents > a.indent-2 {
     padding-left: 3rem;
   }
+
+
 </style>

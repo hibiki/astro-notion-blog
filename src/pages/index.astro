@@ -52,7 +52,31 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
+    <div class="aside-archives">
+      <ul>
+        <li><a href="/posts/archives/">Archives</a></li>
+        <li><a href="/posts/about/">About</a></li>
+        <li><a href="https://twitter.com/hibiki_3d" target="_blank">X（Twitter）@hibiki_3d</a></li>
+      </ul>
+    </div>
+    <!-- BlogPostsLink heading="Recommended" posts={rankedPosts} / -->
     <BlogTagsLink heading="Categories" tags={tags} />
   </div>
 </Layout>
+
+<style>
+  .aside-archives {
+    margin-bottom: 2em;
+    padding: .5em 0;
+  }
+  .aside-archives ul {
+    margin-left: .4em;
+    padding: 0;
+  }
+  .aside-archives a {
+    text-decoration: underline;
+  }
+  .aside-archives a:hover {
+    text-decoration: none;
+  }
+</style>
